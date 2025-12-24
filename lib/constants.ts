@@ -2,11 +2,11 @@ export interface EventItem {
   id: string;
   title: string;
   image: string;
-  slug?: string;
-  date?: string; // ISO date
-  time?: string;
-  location?: string;
-  description?: string;
+  slug: string;
+  date: string; // ISO date
+  time: string;
+  location: string;
+  description: string;
   url?: string;
   tags?: string[];
 }
