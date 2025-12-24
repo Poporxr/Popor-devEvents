@@ -30,7 +30,7 @@ const EventCard = ({ title, image, slug,
           <p>{date}</p>
         </div>
         <div>
-          <Image src="/icons/clock.svg" alt="clock icon" width={14} height={14} />
+          <Image src="/icons/clock.svg" alt="clock icon" width={14} height={14} /> 
           <p>{time}</p>
         </div>
       </div>
