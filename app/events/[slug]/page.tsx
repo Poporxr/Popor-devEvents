@@ -34,10 +34,23 @@ const EventTags = ({ tags }: { tags: string[] }) => (
 const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
-  const request = await fetch(`${BASE_URL}/api/events/${slug}`);
-  const { event: { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } } = await request.json();
+  const response = await fetch(`${BASE_URL}/api/events/${slug}`);
+  
+  if (!response.ok) {
+    return notFound();
+  }
+  
+  const data = await response.json();
+  
+  if (!data.event) {
+    return notFound();
+  }
+  
+  const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = data.event;
 
-  if (!description) { return notFound() }
+  if (!description) {
+    return notFound();
+  }
 
   const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
 
