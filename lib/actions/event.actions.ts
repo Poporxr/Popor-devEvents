@@ -10,7 +10,9 @@ export async function getSimilarEventsBySlug(slug: string) {
 
    return await Event.find({ _id: { $ne: event._id }, tags: { $in: event.tags } }).lean();
 
-  } catch{
+  } catch(error) {
+    console.error('[getSimilarEventsBySlug] Error fetching similar events:', error);
     return [];
+  }
   }
 }
