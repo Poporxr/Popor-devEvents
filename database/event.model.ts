@@ -157,7 +157,16 @@ function normalizeDate(dateString: string): string {
   if (isNaN(date.getTime())) {
     throw new Error('Invalid date format');
   }
-  return date.toISOString().split('T')[0]; // Return YYYY-MM-DD format
+  // Parse as YYYY-MM-DD and construct UTC date to avoid timezone shifts
+  const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    return `${match[1]}-${match[2]}-${match[3]}`;
+  }
+  // For other formats, use UTC to avoid local timezone interpretation
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 // Helper function to normalize time format
