@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import { Event, type IEvent } from '@/database';
+import Event, { type IEvent } from '@/database/event.model';
 
 interface RouteContext {
   // In Next.js 15, params is asynchronous in route handlers
