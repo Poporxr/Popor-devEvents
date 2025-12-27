@@ -52,8 +52,6 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
     return notFound();
   }
 
-  const Bookings: number = 10;
-
   const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
 
   return (
@@ -97,11 +95,9 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
         <aside className="booking">
           <div className="signup-card">
             <h2>Book Your Seat Now!</h2>
-            {Bookings > 0 ? (
-              <p>Join {Bookings} people who have already booked</p>
-            ) : (
-              <p className="text-sm">Be the first to book</p>)}
-            <BookEvent />
+            {/* TODO: Replace this placeholder with real booking count once bookings are implemented */}
+            <p className="text-sm">Join our community and reserve your seat today</p>
+            <BookEvent slug={slug} />
           </div>
         </aside>
       </div>
