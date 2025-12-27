@@ -95,7 +95,7 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
         <aside className="booking">
           <div className="signup-card">
             <h2>Book Your Seat Now!</h2>
-            {/* TODO: Replace this placeholder with real booking count once bookings are implemented */
+            {/* TODO: Replace this placeholder with real booking count once bookings are implemented */}
             <p className="text-sm">Join our community and reserve your seat today</p>
             <BookEvent slug={slug} />
           </div>
