@@ -8,11 +8,14 @@ import { NextRequest, NextResponse } from "next/server";
 // before deploying to production.
 async function authenticateEventRequest(req: NextRequest): Promise<NextResponse | null> {
   const authHeader = req.headers.get('authorization');
+  const requiredToken = process.env.INTERNAL_API_TOKEN;
 
-  // Allow all requests during development, but log a warning to avoid shipping this by mistake.
-  if (process.env.NODE_ENV !== 'production') {
+  // If no token is configured, treat auth as disabled (useful for local/dev environments)
+  if (!requiredToken) {
     if (!authHeader) {
-      console.warn('[events POST] Missing Authorization header (allowed in non-production).');
+      console.warn(
+        '[events POST] Missing Authorization header (auth disabled because INTERNAL_API_TOKEN is not set).',
+      );
     }
     return null;
   }
@@ -27,7 +30,7 @@ async function authenticateEventRequest(req: NextRequest): Promise<NextResponse 
   const token = authHeader.slice('bearer '.length).trim();
 
   // Placeholder token check. Replace with real verification (e.g. JWT verify, session lookup, etc.).
-  if (!token || token !== process.env.INTERNAL_API_TOKEN) {
+  if (!token || token !== requiredToken) {
     return NextResponse.json(
       { message: 'Forbidden: invalid or expired credentials.' },
       { status: 403 },
