@@ -1,3 +1,5 @@
+'use cache';
+
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
 import type { IEvent } from "@/database";
@@ -39,11 +41,10 @@ const EventTags = ({ tags }: { tags: string[] }) => (
   </div>
 );
 
-const EventDetailsPage = async ({ params }: { params: { slug: string } }) => {
-  'use cache';
+const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   cacheLife('hours');
 
-  const { slug } = params;
+  const { slug } = await params;
 
   const event = await getEventBySlug(slug);
 
