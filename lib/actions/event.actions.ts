@@ -9,18 +9,18 @@ export async function getSimilarEventsBySlug(slug: string): Promise<IEvent[]> {
   try {
     await connectDB();
 
-    const event = await Event.findOne({ slug }).lean<IEvent>().exec();
+    const event = (await Event.findOne({ slug }).lean().exec()) as IEvent | null;
 
     if (!event || !Array.isArray(event.tags) || event.tags.length === 0) {
       return [];
     }
 
-    const similarEvents = await Event.find({
+    const similarEvents = (await Event.find({
       _id: { $ne: event._id },
       tags: { $in: event.tags },
     })
-      .lean<IEvent>()
-      .exec();
+      .lean()
+      .exec()) as IEvent[];
 
     return similarEvents;
   } catch (error) {
