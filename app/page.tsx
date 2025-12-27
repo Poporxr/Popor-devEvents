@@ -10,7 +10,7 @@ const page = async () => {
   cacheLife('hours');
 
   await connectDB();
-  const events = await Event.find().sort({ createdAt: -1 }).lean<IEvent>().exec();
+  const events = (await Event.find().sort({ createdAt: -1 }).lean().exec()) as IEvent[];
 
   return(
     <section>
