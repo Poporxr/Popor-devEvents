@@ -7,6 +7,9 @@ import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+// This page uses uncached database queries; force dynamic rendering to avoid prerender errors
+export const dynamic = "force-dynamic";
+
 const EventDetailItem = ({ icon, alt, label }: { icon: string; alt: string; label: string; }) => (
   <div className='flex-row-gap-2 items-center'>
     <Image src={icon} alt={alt} width={17} height={17} />
