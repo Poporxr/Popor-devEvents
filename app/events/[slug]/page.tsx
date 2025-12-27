@@ -1,11 +1,11 @@
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
-import { IEvent } from "@/database";
+import type { IEvent } from "@/database";
+import Event from "@/database/event.model";
+import connectDB from "@/lib/mongodb";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const EventDetailItem = ({ icon, alt, label }: { icon: string; alt: string; label: string; }) => (
   <div className='flex-row-gap-2 items-center'>
@@ -34,19 +34,14 @@ const EventTags = ({ tags }: { tags: string[] }) => (
 const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
-  const response = await fetch(`${BASE_URL}/api/events/${slug}`);
-  
-  if (!response.ok) {
+  await connectDB();
+  const event = await Event.findOne({ slug }).lean<IEvent>().exec();
+
+  if (!event) {
     return notFound();
   }
-  
-  const data = await response.json();
-  
-  if (!data.event) {
-    return notFound();
-  }
-  
-  const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = data.event;
+
+  const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = event;
 
   if (!description) {
     return notFound();
@@ -59,7 +54,7 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
       <div className="header">
         <h1>Event Description</h1>
         <p>{description}</p>
-      </ div>
+      </div>
 
       <div className="details">
         {/* left -side-Event Content */}

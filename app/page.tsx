@@ -2,23 +2,15 @@ import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
 import { cacheLife } from "next/cache";
 import type { IEvent } from "@/database";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import Event from "@/database/event.model";
+import connectDB from "@/lib/mongodb";
 
 const page = async () => {
   'use cache';
   cacheLife('hours');
 
-  const baseUrl = BASE_URL || 'http://localhost:3000';
-
-  const response = await fetch(`${baseUrl}/api/events`);
-
-  if (!response.ok) {
-    // Surface a clear error in development while avoiding a hard crash
-    throw new Error(`Failed to load events: ${response.status} ${response.statusText}`);
-  }
-
-  const { events } = await response.json();
+  await connectDB();
+  const events = await Event.find().sort({ createdAt: -1 }).lean<IEvent>().exec();
 
   return(
     <section>
