@@ -1,15 +1,12 @@
-'use cache';
-
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
 import type { IEvent } from "@/database";
 import Event from "@/database/event.model";
 import connectDB from "@/lib/mongodb";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
-import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { cache } from "react";
+import { cache, Suspense } from "react";
 
 const getEventBySlug = cache(async (slug: string): Promise<IEvent | null> => {
   await connectDB();
@@ -41,10 +38,12 @@ const EventTags = ({ tags }: { tags: string[] }) => (
   </div>
 );
 
-const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  cacheLife('hours');
+interface EventDetailsContentProps {
+  slugPromise: Promise<{ slug: string }>;
+}
 
-  const { slug } = await params;
+const EventDetailsContent = async ({ slugPromise }: EventDetailsContentProps) => {
+  const { slug } = await slugPromise;
 
   const event = await getEventBySlug(slug);
 
@@ -52,7 +51,19 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
     return notFound();
   }
 
-  const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = event;
+  const {
+    description,
+    image,
+    overview,
+    date,
+    time,
+    location,
+    mode,
+    agenda,
+    audience,
+    tags,
+    organizer,
+  } = event;
 
   if (!description) {
     return notFound();
@@ -86,14 +97,14 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
             <EventDetailItem icon='/icons/audience.svg' alt='audience' label={audience} />
           </section>
 
-          <EventAgenda agendaItems={(agenda)} />
+          <EventAgenda agendaItems={agenda} />
 
           <section className="flex-col-gap-2">
             <h2>About the Organizer</h2>
             <p>{organizer}</p>
           </section>
 
-          <EventTags tags={(tags)} />
+          <EventTags tags={tags} />
 
         </div>
 
@@ -109,12 +120,20 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
       </div>
       <div className="flex w-full flex-col gap-4 pt-20">
         <h2>Similar Events You May Like</h2>
-          {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
-            <EventCard key={similarEvent.slug} {...similarEvent} />
-          ))}
+        {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
+          <EventCard key={similarEvent.slug} {...similarEvent} />
+        ))}
       </div>
     </section>
-  )
+  );
+};
+
+const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  return (
+    <Suspense fallback={<div>Loading event...</div>}>
+      <EventDetailsContent slugPromise={params} />
+    </Suspense>
+  );
 };
 
 export default EventDetailsPage;
