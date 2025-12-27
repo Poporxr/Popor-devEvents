@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
 import type { IEvent } from "@/database";
