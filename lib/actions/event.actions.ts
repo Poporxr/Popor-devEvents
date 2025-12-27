@@ -3,9 +3,10 @@
 import Event from '@/database/event.model';
 import type { IEvent } from '@/database';
 import connectDB from "@/lib/mongodb";
+import { cache } from "react";
 
 // Fetch events that share at least one tag with the target event, excluding the event itself
-export async function getSimilarEventsBySlug(slug: string): Promise<IEvent[]> {
+export const getSimilarEventsBySlug = cache(async (slug: string): Promise<IEvent[]> => {
   try {
     await connectDB();
 
@@ -27,4 +28,4 @@ export async function getSimilarEventsBySlug(slug: string): Promise<IEvent[]> {
     console.error('[getSimilarEventsBySlug] Error fetching similar events:', error);
     return [];
   }
-}
+});

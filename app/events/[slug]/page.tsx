@@ -6,9 +6,13 @@ import connectDB from "@/lib/mongodb";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
-// This page uses uncached database queries; force dynamic rendering to avoid prerender errors
-export const dynamic = "force-dynamic";
+const getEventBySlug = cache(async (slug: string): Promise<IEvent | null> => {
+  await connectDB();
+  const event = (await Event.findOne({ slug }).lean().exec()) as IEvent | null;
+  return event;
+});
 
 const EventDetailItem = ({ icon, alt, label }: { icon: string; alt: string; label: string; }) => (
   <div className='flex-row-gap-2 items-center'>
@@ -37,8 +41,7 @@ const EventTags = ({ tags }: { tags: string[] }) => (
 const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
-  await connectDB();
-  const event = await Event.findOne({ slug }).lean<IEvent>().exec();
+  const event = await getEventBySlug(slug);
 
   if (!event) {
     return notFound();
