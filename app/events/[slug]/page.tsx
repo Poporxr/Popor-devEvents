@@ -4,6 +4,7 @@ import type { IEvent } from "@/database";
 import Event from "@/database/event.model";
 import connectDB from "@/lib/mongodb";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
+import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cache } from "react";
@@ -38,8 +39,11 @@ const EventTags = ({ tags }: { tags: string[] }) => (
   </div>
 );
 
-const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params;
+const EventDetailsPage = async ({ params }: { params: { slug: string } }) => {
+  'use cache';
+  cacheLife('hours');
+
+  const { slug } = params;
 
   const event = await getEventBySlug(slug);
 
