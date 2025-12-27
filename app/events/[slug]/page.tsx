@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+//export const dynamic = "force-dynamic";
 
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
